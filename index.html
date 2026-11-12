@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>بوابة موظفي مناهل</title>
+<meta name="theme-color" content="#173f57">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="بوابة مناهل">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+ html,body{margin:0;min-height:100%;background:#173f57;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+ #land{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:calc(24px + env(safe-area-inset-top)) 22px 28px;box-sizing:border-box;text-align:center}
+ .logo{width:120px;height:120px;border-radius:28px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+ h1{margin:6px 0 0;font-size:24px}
+ .sub{margin:0;opacity:.8;font-size:14px}
+ #how{background:rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;max-width:360px;text-align:right;line-height:1.9;font-size:15px}
+ #how ol{margin:6px 0 0;padding-inline-start:20px}
+ .btn{display:block;width:100%;max-width:320px;box-sizing:border-box;border:0;border-radius:14px;padding:14px;font-size:17px;font-weight:700;text-decoration:none;font-family:inherit;cursor:pointer}
+ .big{background:#e9b949;color:#173f57}
+ .ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<div id="land">
+ <img src="apple-touch-icon.png" alt="" class="logo">
+ <h1>بوابة موظفي مناهل</h1>
+ <p class="sub">شركة مناهل القصيم للمياه الصحية</p>
+ <div id="how"></div>
+ <button class="btn big" id="instBtn" style="display:none">تثبيت التطبيق</button>
+ <a class="btn ghost" id="open">فتح البوابة الآن</a>
+</div>
+<script>
+const PORTAL_URL = "https://script.google.com/macros/s/AKfycbz7ykEK2jquMmC5YmdT378xYocCTk54qq537Raa9GgCLOTi35fCVhhoSiYdwGBvULcXJA/exec";
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+document.getElementById('open').href=PORTAL_URL;
+if(standalone){document.getElementById('land').innerHTML='<img src="apple-touch-icon.png" class="logo" alt=""><p class="sub">جاري فتح البوابة…</p>';location.replace(PORTAL_URL)}
+else{
+ const how=document.getElementById('how'),ib=document.getElementById('instBtn');
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ if(ios)how.innerHTML='<b>طريقة التثبيت على الآيفون:</b><ol><li>افتح هذي الصفحة من <b>Safari</b></li><li>اضغط زر المشاركة <span class="ic">⬆️</span> تحت</li><li>اختر <b>«إضافة إلى الشاشة الرئيسية»</b> ثم «إضافة»</li></ol>';
+ else how.innerHTML='<p>اضغط <b>«تثبيت التطبيق»</b>، أو من قائمة المتصفح ⋮ اختر <b>«تثبيت التطبيق»</b> أو «إضافة إلى الشاشة الرئيسية».</p>';
+ let deferred=null;
+ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;ib.style.display='block'});
+ ib.onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;ib.style.display='none'};
+ addEventListener('appinstalled',()=>{how.innerHTML='<p>✔ تم التثبيت. افتح «بوابة مناهل» من الشاشة الرئيسية.</p>';ib.style.display='none'});
+}
+</script>
+</body>
+</html>
